@@ -1,0 +1,25 @@
+[project]
+name = "link-dl"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "graphviz>=0.21",
+    "imageio>=2.37.2",
+    "matplotlib>=3.9.4",
+    "pandas>=2.3.3",
+    "scikit-learn>=1.6.1",
+    "torch>=2.8.0",
+    "torchinfo>=1.8.0",
+    "torchvision>=0.23.0",
+    "torchviz>=0.0.3",
+    "wandb>=0.26.1",
+]
+
+[project.scripts]
+link-dl = "link_dl:main"
+
+[build-system]
+requires = ["uv_build>=0.12.7,<0.13.0"]
+build-backend = "uv_build"
