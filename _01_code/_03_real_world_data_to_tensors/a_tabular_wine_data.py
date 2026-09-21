@@ -2,12 +2,14 @@ import csv
 import os
 import numpy as np
 
+#! os 중립적 경로
 wine_path = os.path.join(os.path.pardir, os.path.pardir, "_00_data", "d_tabular-wine", "winequality-white.csv")
 wineq_numpy = np.loadtxt(wine_path, dtype=np.float32, delimiter=";", skiprows=1)
 print(wineq_numpy.dtype)
 print(wineq_numpy.shape)
 print(wineq_numpy)
 print()
+
 
 col_list = next(csv.reader(open(wine_path), delimiter=';'))
 print(col_list)

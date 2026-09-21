@@ -42,7 +42,7 @@ def model(X, W, b):
   # print(b.shape)  # >>> torch.Size([1])
 
   u = torch.sum(X * W, dim=1) + b
-  # u = X @ W + b
+  # u = X @ W + b #! @: 벡터 내적
   # u.shape: torch.Size([12])
 
   z = activate(u)
@@ -124,7 +124,7 @@ def main():
 
   print("#" * 50)
 
-  learn(W, b, train_data_loader)
+  W, b = learn(W, b, train_data_loader)
 
   print("#" * 50)
 
