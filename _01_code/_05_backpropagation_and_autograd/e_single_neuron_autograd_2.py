@@ -1,5 +1,10 @@
 import torch
 from torch.utils.data import DataLoader
+from pathlib import Path
+import sys
+
+if __package__ in (None, ""):
+  sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from _01_code._04_artificial_neuron_and_gradient_descent_and_bp.a_single_neuron import model, loss_fn, SimpleDataset
 
