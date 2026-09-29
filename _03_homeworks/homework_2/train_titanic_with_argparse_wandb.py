@@ -101,7 +101,7 @@ def main(args):
   config = {
     'epochs': args.epochs,
     'batch_size': args.batch_size,
-    'learning_rate': 1e-3,
+    'learning_rate': args.learning_rate,
     'n_hidden_unit_list': [20, 20],
   }
 
@@ -146,11 +146,15 @@ if __name__ == "__main__":
   )
 
   parser.add_argument(
-    "-b", "--batch_size", type=int, default=512, help="Batch size (int, default: 512)"
+    "-b", "--batch_size", type=int, default=128, help="Batch size (int, default: 128)"
   )
 
   parser.add_argument(
-    "-e", "--epochs", type=int, default=1_000, help="Number of training epochs (int, default:1_000)"
+    "-e", "--epochs", type=int, default=10_000, help="Number of training epochs (int, default:10_000)"
+  )
+
+  parser.add_argument(
+    "-lr", "--learning_rate", type=float, default=1e-3, help="Learning rate (float, default: 1e-3)"
   )
 
   args = parser.parse_args()
