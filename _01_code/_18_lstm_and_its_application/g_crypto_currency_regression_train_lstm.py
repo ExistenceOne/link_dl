@@ -18,11 +18,11 @@ if not os.path.isdir(CHECKPOINT_FILE_PATH):
 
 from _01_code._18_lstm_and_its_application.f_arg_parser import get_parser
 from _01_code._17_rnn.g_rnn_trainer import RegressionTrainer
-from _01_code._03_real_world_data_to_tensors.p__cryptocurrency_dataset_dataloader import get_cryptocurrency_data, \
+from _01_code._03_real_world_data_to_tensors.p_cryptocurrency_dataset_dataloader import get_cryptocurrency_data, \
   CryptoCurrencyDataset
 
 
-def get_btc_krw_data(sequence_size=10, validation_size=100, test_size=10, is_regression=True):
+def get_btc_krw_data(run, sequence_size=10, validation_size=100, test_size=10, is_regression=True):
   X_train, X_validation, X_test, y_train, y_validation, y_test, y_train_date, y_validation_date, y_test_date \
     = get_cryptocurrency_data(
       sequence_size=sequence_size, validation_size=validation_size, test_size=test_size,
@@ -43,10 +43,10 @@ def get_btc_krw_data(sequence_size=10, validation_size=100, test_size=10, is_reg
   test_crypto_currency_dataset = CryptoCurrencyDataset(X=X_test, y=y_test)
 
   train_data_loader = DataLoader(
-    dataset=train_crypto_currency_dataset, batch_size=wandb.config.batch_size, shuffle=True
+    dataset=train_crypto_currency_dataset, batch_size=run.config.batch_size, shuffle=True
   )
   validation_data_loader = DataLoader(
-    dataset=validation_crypto_currency_dataset, batch_size=wandb.config.batch_size, shuffle=True
+    dataset=validation_crypto_currency_dataset, batch_size=run.config.batch_size, shuffle=True
   )
   test_data_loader = DataLoader(
     dataset=test_crypto_currency_dataset, batch_size=len(test_crypto_currency_dataset), shuffle=True
@@ -88,33 +88,31 @@ def main(args):
   }
 
   project_name = "lstm_regression_btc_krw"
-  wandb.init(
+  with wandb.init(
     mode="online" if args.wandb else "disabled",
     project=project_name,
     notes="btc_krw experiment with lstm",
     tags=["lstm", "regression", "btc_krw"],
     name=run_time_str,
     config=config
-  )
-  print(args)
-  print(wandb.config)
+  ) as run:
+    print(args)
+    print(run.config)
 
-  train_data_loader, validation_data_loader, _ = get_btc_krw_data()
-  device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-  print(f"Training on device {device}.")
+    train_data_loader, validation_data_loader, _ = get_btc_krw_data()
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print(f"Training on device {device}.")
 
-  model = get_model()
-  model.to(device)
+    model = get_model()
+    model.to(device)
 
-  optimizer = optim.Adam(model.parameters(), lr=wandb.config.learning_rate, weight_decay=wandb.config.weight_decay)
+    optimizer = optim.Adam(model.parameters(), lr=run.config.learning_rate, weight_decay=run.config.weight_decay)
 
-  regression_trainer = RegressionTrainer(
-    project_name, model, optimizer, train_data_loader, validation_data_loader, None,
-    run_time_str, wandb, device, CHECKPOINT_FILE_PATH
-  )
-  regression_trainer.train_loop()
-
-  wandb.finish()
+    regression_trainer = RegressionTrainer(
+      project_name, model, optimizer, train_data_loader, validation_data_loader, None,
+      run_time_str, run, device, CHECKPOINT_FILE_PATH
+    )
+    regression_trainer.train_loop()
 
 
 if __name__ == "__main__":

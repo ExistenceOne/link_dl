@@ -21,7 +21,7 @@ from _01_code._09_fcn_best_practice.c_trainer import ClassificationTrainer
 from _01_code._09_fcn_best_practice.e_arg_parser import get_parser
 
 
-def get_cifar10_data(flatten=False):
+def get_cifar10_data(run, flatten=False):
   data_path = os.path.join(BASE_PATH, "_00_data", "i_cifar10")
 
   print("DATA PATH: {0}".format(data_path))
@@ -37,12 +37,12 @@ def get_cifar10_data(flatten=False):
   print("Number of Data Loading Workers:", num_data_loading_workers)
 
   train_data_loader = DataLoader(
-    dataset=cifar10_train, batch_size=wandb.config.batch_size, shuffle=True,
+    dataset=cifar10_train, batch_size=run.config.batch_size, shuffle=True,
     pin_memory=True, num_workers=num_data_loading_workers
   )
 
   validation_data_loader = DataLoader(
-    dataset=cifar10_validation, batch_size=wandb.config.batch_size,
+    dataset=cifar10_validation, batch_size=run.config.batch_size,
     pin_memory=True, num_workers=num_data_loading_workers
   )
 
@@ -95,33 +95,31 @@ def main(args):
   }
 
   project_name = "fcn_cifar10"
-  wandb.init(
+  with wandb.init(
     mode="online" if args.wandb else "disabled",
     project=project_name,
     notes="cifar10 experiment with fcn",
     tags=["fcc", "cifar10"],
     name=run_time_str,
     config=config
-  )
-  print(args)
-  print(wandb.config)
+  ) as run:
+    print(args)
+    print(run.config)
 
-  device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-  print(f"Training on device {device}.")
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print(f"Training on device {device}.")
 
-  train_data_loader, validation_data_loader, cifar10_transforms = get_cifar10_data(flatten=True)
-  model = get_model()
-  model.to(device)
+    train_data_loader, validation_data_loader, cifar10_transforms = get_cifar10_data(run, flatten=True)
+    model = get_model()
+    model.to(device)
 
-  optimizer = optim.SGD(model.parameters(), lr=wandb.config.learning_rate)
+    optimizer = optim.SGD(model.parameters(), lr=run.config.learning_rate)
 
-  classification_trainer = ClassificationTrainer(
-    project_name, model, optimizer, train_data_loader, validation_data_loader, cifar10_transforms,
-    run_time_str, wandb, device, CHECKPOINT_FILE_PATH
-  )
-  classification_trainer.train_loop()
-
-  wandb.finish()
+    classification_trainer = ClassificationTrainer(
+      project_name, model, optimizer, train_data_loader, validation_data_loader, cifar10_transforms,
+      run_time_str, run, device, CHECKPOINT_FILE_PATH
+    )
+    classification_trainer.train_loop()
 
 
 if __name__ == "__main__":
