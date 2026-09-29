@@ -55,6 +55,19 @@ def get_model_and_optimizer(run):
   return my_model, optimizer
 
 
+def binary_accuracy_f1(logits, targets):
+  predicted = logits.reshape(-1) >= 0
+  actual = targets.reshape(-1).bool()
+  accuracy = 100.0 * (predicted == actual).float().mean().item()
+
+  true_positives = (predicted & actual).sum().item()
+  false_positives = (predicted & ~actual).sum().item()
+  false_negatives = (~predicted & actual).sum().item()
+  denominator = 2 * true_positives + false_positives + false_negatives
+  f1 = 0.0 if denominator == 0 else 2 * true_positives / denominator
+  return accuracy, f1
+
+
 def training_loop(model, optimizer, train_data_loader, validation_data_loader, run):
   n_epochs = run.config.epochs
   loss_fn = nn.BCEWithLogitsLoss()
@@ -63,6 +76,8 @@ def training_loop(model, optimizer, train_data_loader, validation_data_loader, r
   for epoch in range(1, n_epochs + 1):
     loss_train = 0.0
     num_trains = 0
+    train_logits = []
+    train_targets = []
     for train_batch in train_data_loader:
       input = train_batch['input']
       target = train_batch['target'].float().unsqueeze(1)
@@ -70,13 +85,20 @@ def training_loop(model, optimizer, train_data_loader, validation_data_loader, r
       loss = loss_fn(output_train, target)
       loss_train += loss.item()
       num_trains += 1
+      train_logits.append(output_train.detach())
+      train_targets.append(target)
 
       optimizer.zero_grad()
       loss.backward()
       optimizer.step()
 
+    train_accuracy, train_f1 = binary_accuracy_f1(
+      torch.cat(train_logits), torch.cat(train_targets)
+    )
     loss_validation = 0.0
     num_validations = 0
+    validation_logits = []
+    validation_targets = []
     with torch.no_grad():
       for validation_batch in validation_data_loader:
         input = validation_batch['input']
@@ -85,18 +107,30 @@ def training_loop(model, optimizer, train_data_loader, validation_data_loader, r
         loss = loss_fn(output_validation, target)
         loss_validation += loss.item()
         num_validations += 1
+        validation_logits.append(output_validation)
+        validation_targets.append(target)
+
+    validation_accuracy, validation_f1 = binary_accuracy_f1(
+      torch.cat(validation_logits), torch.cat(validation_targets)
+    )
 
     run.log({
       "Epoch": epoch,
       "Training loss": loss_train / num_trains,
-      "Validation loss": loss_validation / num_validations
+      "Validation loss": loss_validation / num_validations,
+      "Training accuracy (%)": train_accuracy,
+      "Validation accuracy (%)": validation_accuracy,
+      "Training F1": train_f1,
+      "Validation F1": validation_f1,
     })
 
     if epoch >= next_print_epoch:
       print(
         f"Epoch {epoch}, "
         f"Training loss {loss_train / num_trains:.4f}, "
-        f"Validation loss {loss_validation / num_validations:.4f}"
+        f"accuracy {train_accuracy:.2f}%, F1 {train_f1:.4f}, "
+        f"Validation loss {loss_validation / num_validations:.4f}, "
+        f"accuracy {validation_accuracy:.2f}%, F1 {validation_f1:.4f}"
       )
       next_print_epoch += 100
 
@@ -129,6 +163,10 @@ def main(args):
 
     # 가로축을 Epoch, 세로축을 Validation loss로 그려줘, 실험 요약에는 가장 낮았던 값을 남겨줘.”
     run.define_metric("Validation loss", step_metric="Epoch", summary="min")
+    run.define_metric("Training accuracy (%)", step_metric="Epoch")
+    run.define_metric("Validation accuracy (%)", step_metric="Epoch", summary="max")
+    run.define_metric("Training F1", step_metric="Epoch")
+    run.define_metric("Validation F1", step_metric="Epoch", summary="max")
 
     train_data_loader, validation_data_loader = get_data(run)
 

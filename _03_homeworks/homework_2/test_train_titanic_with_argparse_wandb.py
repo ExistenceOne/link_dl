@@ -6,6 +6,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from _03_homeworks.homework_2.train_titanic_with_argparse_wandb import (
+  binary_accuracy_f1,
   get_data,
   get_model_and_optimizer,
   training_loop,
@@ -28,6 +29,15 @@ class FakeRun:
 
 
 class TitanicTrainingTest(unittest.TestCase):
+  def test_binary_accuracy_and_f1(self):
+    logits = torch.tensor([[2.0], [-1.0], [0.2], [-2.0]])
+    targets = torch.tensor([[1.0], [0.0], [0.0], [1.0]])
+    self.assertEqual(binary_accuracy_f1(logits, targets), (50.0, 0.5))
+
+    logits = torch.tensor([[-2.0], [-1.0]])
+    targets = torch.tensor([[0.0], [0.0]])
+    self.assertEqual(binary_accuracy_f1(logits, targets), (100.0, 0.0))
+
   def test_activation_applies_to_both_hidden_layers(self):
     activations = {
       "sigmoid": torch.nn.Sigmoid,
@@ -68,9 +78,19 @@ class TitanicTrainingTest(unittest.TestCase):
     self.assertEqual(len(run.logged), 1)
     metrics = run.logged[0]
     self.assertEqual(metrics["Epoch"], 1)
-    self.assertEqual(set(metrics), {"Epoch", "Training loss", "Validation loss"})
+    self.assertEqual(set(metrics), {
+      "Epoch", "Training loss", "Validation loss",
+      "Training accuracy (%)", "Validation accuracy (%)",
+      "Training F1", "Validation F1",
+    })
     self.assertTrue(math.isfinite(metrics["Training loss"]))
     self.assertTrue(math.isfinite(metrics["Validation loss"]))
+    for key in ("Training accuracy (%)", "Validation accuracy (%)"):
+      self.assertGreaterEqual(metrics[key], 0.0)
+      self.assertLessEqual(metrics[key], 100.0)
+    for key in ("Training F1", "Validation F1"):
+      self.assertGreaterEqual(metrics[key], 0.0)
+      self.assertLessEqual(metrics[key], 1.0)
 
 
 if __name__ == "__main__":
