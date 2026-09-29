@@ -35,7 +35,7 @@ class TitanicTrainingTest(unittest.TestCase):
     self.assertEqual(batch["input"].shape[1], 10)
     self.assertEqual(batch["target"].dtype, torch.int64)
 
-  def test_one_epoch_logs_finite_loss_and_accuracy(self):
+  def test_one_epoch_logs_finite_classification_loss(self):
     run = FakeRun()
     samples = [
       {"input": torch.zeros(10), "target": torch.tensor(0)},
@@ -43,19 +43,18 @@ class TitanicTrainingTest(unittest.TestCase):
       {"input": torch.full((10,), 2.0), "target": torch.tensor(0)},
     ]
     loader = DataLoader(samples, batch_size=2)
-    model, optimizer = get_model_and_optimizer(run, n_input=10)
+    model, optimizer = get_model_and_optimizer(run)
 
-    self.assertEqual(model(torch.zeros(2, 10)).shape, (2, 2))
+    self.assertEqual(model(torch.zeros(2, 10)).shape, (2, 1))
+    self.assertIsInstance(optimizer, torch.optim.SGD)
     training_loop(model, optimizer, loader, loader, run)
 
     self.assertEqual(len(run.logged), 1)
     metrics = run.logged[0]
     self.assertEqual(metrics["Epoch"], 1)
-    for key in ("Training loss", "Validation loss"):
-      self.assertTrue(math.isfinite(metrics[key]))
-    for key in ("Training accuracy (%)", "Validation accuracy (%)"):
-      self.assertGreaterEqual(metrics[key], 0)
-      self.assertLessEqual(metrics[key], 100)
+    self.assertEqual(set(metrics), {"Epoch", "Training loss", "Validation loss"})
+    self.assertTrue(math.isfinite(metrics["Training loss"]))
+    self.assertTrue(math.isfinite(metrics["Validation loss"]))
 
 
 if __name__ == "__main__":
