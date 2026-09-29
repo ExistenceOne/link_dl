@@ -1,4 +1,5 @@
 import math
+import tempfile
 import unittest
 from types import SimpleNamespace
 
@@ -20,6 +21,8 @@ class FakeRun:
       epochs=1,
       learning_rate=1e-3,
       activation="relu",
+      early_stop_patience=2,
+      early_stop_delta=1e-5,
       n_hidden_unit_list=[8, 8],
     )
     self.logged = []
@@ -73,7 +76,8 @@ class TitanicTrainingTest(unittest.TestCase):
 
     self.assertEqual(model(torch.zeros(2, 10)).shape, (2, 1))
     self.assertIsInstance(optimizer, torch.optim.SGD)
-    training_loop(model, optimizer, loader, loader, run)
+    with tempfile.TemporaryDirectory() as checkpoint_dir:
+      training_loop(model, optimizer, loader, loader, run, checkpoint_dir, "test")
 
     self.assertEqual(len(run.logged), 1)
     metrics = run.logged[0]
@@ -91,6 +95,20 @@ class TitanicTrainingTest(unittest.TestCase):
     for key in ("Training F1", "Validation F1"):
       self.assertGreaterEqual(metrics[key], 0.0)
       self.assertLessEqual(metrics[key], 1.0)
+
+  def test_early_stops_when_validation_loss_does_not_improve(self):
+    run = FakeRun()
+    run.config.epochs = 10
+    run.config.learning_rate = 0.0
+    samples = [{"input": torch.zeros(10), "target": torch.tensor(0)}]
+    loader = DataLoader(samples, batch_size=1)
+    model, optimizer = get_model_and_optimizer(run)
+
+    with tempfile.TemporaryDirectory() as checkpoint_dir:
+      training_loop(model, optimizer, loader, loader, run, checkpoint_dir, "constant")
+
+    self.assertEqual(len(run.logged), 3)
+    self.assertEqual(run.logged[-1]["Epoch"], 3)
 
 
 if __name__ == "__main__":

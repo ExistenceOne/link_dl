@@ -13,6 +13,7 @@ import sys
 sys.path.append(BASE_PATH)
 
 from _03_homeworks.homework_2.titanic_dataset import get_preprocessed_dataset
+from _01_code._99_common_utils.early_stopping import EarlyStopping
 
 
 def get_data(run):
@@ -68,7 +69,16 @@ def binary_accuracy_f1(logits, targets):
   return accuracy, f1
 
 
-def training_loop(model, optimizer, train_data_loader, validation_data_loader, run):
+def training_loop(model, optimizer, train_data_loader, validation_data_loader, run,
+                  checkpoint_dir, run_time_str):
+  Path(checkpoint_dir).mkdir(parents=True, exist_ok=True)
+  early_stopping = EarlyStopping(
+    patience=run.config.early_stop_patience,
+    delta=run.config.early_stop_delta,
+    project_name="titanic",
+    checkpoint_file_path=str(checkpoint_dir),
+    run_time_str=run_time_str,
+  )
   n_epochs = run.config.epochs
   loss_fn = nn.BCEWithLogitsLoss()
   next_print_epoch = 100
@@ -114,36 +124,46 @@ def training_loop(model, optimizer, train_data_loader, validation_data_loader, r
       torch.cat(validation_logits), torch.cat(validation_targets)
     )
 
+    validation_loss = loss_validation / num_validations
+    message, early_stop = early_stopping.check_and_save(validation_loss, model)
+
     run.log({
       "Epoch": epoch,
       "Training loss": loss_train / num_trains,
-      "Validation loss": loss_validation / num_validations,
+      "Validation loss": validation_loss,
       "Training accuracy (%)": train_accuracy,
       "Validation accuracy (%)": validation_accuracy,
       "Training F1": train_f1,
       "Validation F1": validation_f1,
     })
 
-    if epoch >= next_print_epoch:
+    if epoch >= next_print_epoch or early_stop:
       print(
         f"Epoch {epoch}, "
         f"Training loss {loss_train / num_trains:.4f}, "
         f"accuracy {train_accuracy:.2f}%, F1 {train_f1:.4f}, "
-        f"Validation loss {loss_validation / num_validations:.4f}, "
-        f"accuracy {validation_accuracy:.2f}%, F1 {validation_f1:.4f}"
+        f"Validation loss {validation_loss:.4f}, "
+        f"accuracy {validation_accuracy:.2f}%, F1 {validation_f1:.4f}, "
+        f"{message}"
       )
       next_print_epoch += 100
+
+    if early_stop:
+      break
 
 
 def main(args):
   torch.manual_seed(42)
   current_time_str = datetime.now().astimezone().strftime('%Y-%m-%d_%H-%M-%S')
+  run_time_str = f"{current_time_str}_{args.activation}_bs{args.batch_size}_lr{args.learning_rate:g}"
 
   config = {
     'epochs': args.epochs,
     'batch_size': args.batch_size,
     'learning_rate': args.learning_rate,
     'activation': args.activation,
+    'early_stop_patience': args.early_stop_patience,
+    'early_stop_delta': args.early_stop_delta,
     'n_hidden_unit_list': [20, 20],
   }
 
@@ -152,7 +172,7 @@ def main(args):
     project="my_model_training",
     notes="Titanic survival classification",
     tags=["my_model", "titanic"],
-    name=f"{current_time_str}_{args.activation}_bs{args.batch_size}_lr{args.learning_rate:g}",
+    name=run_time_str,
     config=config
   ) as run:
     print(args)
@@ -179,7 +199,9 @@ def main(args):
       optimizer=optimizer,
       train_data_loader=train_data_loader,
       validation_data_loader=validation_data_loader,
-      run=run
+      run=run,
+      checkpoint_dir=Path(BASE_PATH) / "_03_homeworks" / "homework_2" / "checkpoints",
+      run_time_str=run_time_str,
     )
 
 
@@ -206,6 +228,16 @@ if __name__ == "__main__":
   parser.add_argument(
     "-a", "--activation", choices=["sigmoid", "relu", "elu", "leaky_relu"],
     default="relu", help="Activation function (default: relu)"
+  )
+
+  parser.add_argument(
+    "--early_stop_patience", type=int, default=100,
+    help="Epochs to wait without validation loss improvement (default: 100)"
+  )
+
+  parser.add_argument(
+    "--early_stop_delta", type=float, default=1e-5,
+    help="Minimum validation loss improvement (default: 1e-5)"
   )
 
   args = parser.parse_args()
