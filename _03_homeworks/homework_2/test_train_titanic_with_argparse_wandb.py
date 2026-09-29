@@ -18,6 +18,7 @@ class FakeRun:
       batch_size=2,
       epochs=1,
       learning_rate=1e-3,
+      activation="relu",
       n_hidden_unit_list=[8, 8],
     )
     self.logged = []
@@ -27,6 +28,21 @@ class FakeRun:
 
 
 class TitanicTrainingTest(unittest.TestCase):
+  def test_activation_applies_to_both_hidden_layers(self):
+    activations = {
+      "sigmoid": torch.nn.Sigmoid,
+      "relu": torch.nn.ReLU,
+      "elu": torch.nn.ELU,
+      "leaky_relu": torch.nn.LeakyReLU,
+    }
+    for name, layer_type in activations.items():
+      with self.subTest(activation=name):
+        run = FakeRun()
+        run.config.activation = name
+        model, _ = get_model_and_optimizer(run)
+        self.assertIsInstance(model.model[1], layer_type)
+        self.assertIsInstance(model.model[3], layer_type)
+
   def test_data_loaders_use_titanic_classification_samples(self):
     train_loader, validation_loader = get_data(FakeRun())
 

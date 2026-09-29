@@ -28,12 +28,18 @@ def get_data(run):
 class MyModel(nn.Module):
   def __init__(self, n_input, n_output, run):
     super().__init__()
+    activation_fn = {
+      "sigmoid": nn.Sigmoid,
+      "relu": nn.ReLU,
+      "elu": nn.ELU,
+      "leaky_relu": nn.LeakyReLU,
+    }[run.config.activation]
 
     self.model = nn.Sequential(
       nn.Linear(n_input, run.config.n_hidden_unit_list[0]),
-      nn.ReLU(),
+      activation_fn(),
       nn.Linear(run.config.n_hidden_unit_list[0], run.config.n_hidden_unit_list[1]),
-      nn.ReLU(),
+      activation_fn(),
       nn.Linear(run.config.n_hidden_unit_list[1], n_output),
     )
 
@@ -96,12 +102,14 @@ def training_loop(model, optimizer, train_data_loader, validation_data_loader, r
 
 
 def main(args):
+  torch.manual_seed(42)
   current_time_str = datetime.now().astimezone().strftime('%Y-%m-%d_%H-%M-%S')
 
   config = {
     'epochs': args.epochs,
     'batch_size': args.batch_size,
     'learning_rate': args.learning_rate,
+    'activation': args.activation,
     'n_hidden_unit_list': [20, 20],
   }
 
@@ -110,7 +118,7 @@ def main(args):
     project="my_model_training",
     notes="Titanic survival classification",
     tags=["my_model", "titanic"],
-    name=current_time_str,
+    name=f"{current_time_str}_{args.activation}_bs{args.batch_size}_lr{args.learning_rate:g}",
     config=config
   ) as run:
     print(args)
@@ -155,6 +163,11 @@ if __name__ == "__main__":
 
   parser.add_argument(
     "-lr", "--learning_rate", type=float, default=1e-3, help="Learning rate (float, default: 1e-3)"
+  )
+
+  parser.add_argument(
+    "-a", "--activation", choices=["sigmoid", "relu", "elu", "leaky_relu"],
+    default="relu", help="Activation function (default: relu)"
   )
 
   args = parser.parse_args()
