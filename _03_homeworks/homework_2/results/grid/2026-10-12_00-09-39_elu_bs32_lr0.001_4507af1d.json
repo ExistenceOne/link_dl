@@ -1,0 +1,29 @@
+{
+  "best_epoch": 1361,
+  "best_validation_loss": 0.3899916708469391,
+  "best_validation_accuracy": 86.51685118675232,
+  "best_validation_f1": 0.7391304347826086,
+  "checkpoint_path": "_03_homeworks/homework_2/results/grid/checkpoints/titanic_checkpoint_2026-10-12_00-09-39_elu_bs32_lr0.001_4507af1d.pt",
+  "stopped_epoch": 1461,
+  "epochs": 10000,
+  "batch_size": 32,
+  "learning_rate": 0.001,
+  "activation": "elu",
+  "early_stop_patience": 100,
+  "early_stop_delta": 1e-05,
+  "n_hidden_unit_list": [
+    20,
+    20
+  ],
+  "seed": 42,
+  "optimizer": "SGD",
+  "run_id": "2026-10-12_00-09-39_elu_bs32_lr0.001_4507af1d",
+  "group": "hw2-20261012-grid",
+  "wandb_url": "https://wandb.ai/existenceone-korea-university-of-technology-and-education/my_model_training/runs/7vhivkfi",
+  "history_path": "_03_homeworks/homework_2/results/grid/2026-10-12_00-09-39_elu_bs32_lr0.001_4507af1d.csv",
+  "hidden_sizes": [
+    20,
+    20
+  ],
+  "max_epochs": 10000
+}

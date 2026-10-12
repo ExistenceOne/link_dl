@@ -45,7 +45,7 @@ class TitanicTestDataset(Dataset):
     return str
 
 
-def get_preprocessed_dataset():
+def get_preprocessed_dataset(seed=42, verbose=False):
     CURRENT_FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 
     train_data_path = os.path.join(CURRENT_FILE_PATH, "train.csv")
@@ -68,17 +68,21 @@ def get_preprocessed_dataset():
 
     all_df = get_preprocessed_dataset_6(all_df)
 
-    print(all_df.columns)
-    print(all_df.head(10))
+    if verbose:
+      print(all_df.columns)
+      print(all_df.head(10))
 
     train_X = all_df[~all_df["Survived"].isnull()].drop("Survived", axis=1).reset_index(drop=True)
     train_y = train_df["Survived"]
 
     test_X = all_df[all_df["Survived"].isnull()].drop("Survived", axis=1).reset_index(drop=True)
     dataset = TitanicDataset(train_X.values, train_y.values)
-    print(dataset)
+    if verbose:
+      print(dataset)
 
-    train_dataset, validation_dataset = random_split(dataset, [0.8, 0.2])
+    train_dataset, validation_dataset = random_split(
+      dataset, [0.8, 0.2], generator=torch.Generator().manual_seed(seed)
+    )
     test_dataset = TitanicTestDataset(test_X.values)
     #print(test_dataset)
 
@@ -125,7 +129,7 @@ def get_preprocessed_dataset_4(all_df):
 
     # 혼자탑승(alone) 컬럼 새롭게 추가
     all_df.loc[all_df["family_num"] == 0, "alone"] = 1
-    all_df["alone"].fillna(0, inplace=True)
+    all_df["alone"] = all_df["alone"].fillna(0)
 
     # 학습에 불필요한 컬럼 제거
     all_df = all_df.drop(["PassengerId", "Name", "family_name", "name", "Ticket", "Cabin"], axis=1)
@@ -144,7 +148,7 @@ def get_preprocessed_dataset_5(all_df):
     ),
     "title"
     ] = "other"
-    all_df["Embarked"].fillna("missing", inplace=True)
+    all_df["Embarked"] = all_df["Embarked"].fillna("missing")
 
     return all_df
 

@@ -20,7 +20,7 @@ class EarlyStopping:
     early_stop = False
 
     if self.val_loss_min is None:
-      self.val_loss_min = new_validation_loss
+      self.save_checkpoint(new_validation_loss, model)
       message = f'Early stopping is stated!'
     elif new_validation_loss < self.val_loss_min - self.delta:
       message = f'V_loss decreased ({self.val_loss_min:7.5f} --> {new_validation_loss:7.5f}). Saving model...'

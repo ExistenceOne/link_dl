@@ -64,6 +64,8 @@ def training_loop(model, optimizer, train_data_loader, validation_data_loader):
 
     loss_validation = 0.0
     num_validations = 0
+    
+    #! 학습용이 아니므로 grad를 계산하지 않도록 설정
     with torch.no_grad():
       for validation_batch in validation_data_loader:
         input, target = validation_batch

@@ -1,10 +1,13 @@
 import math
 import tempfile
 import unittest
+from pathlib import Path
 from types import SimpleNamespace
 
 import torch
 from torch.utils.data import DataLoader
+from _01_code._99_common_utils.early_stopping import EarlyStopping
+from _03_homeworks.homework_2.titanic_dataset import get_preprocessed_dataset
 
 from _03_homeworks.homework_2.train_titanic_with_argparse_wandb import (
   binary_accuracy_f1,
@@ -32,6 +35,49 @@ class FakeRun:
 
 
 class TitanicTrainingTest(unittest.TestCase):
+  def test_first_epoch_checkpoint_survives_worsening_loss(self):
+    model = torch.nn.Linear(1, 1)
+    initial = {key: value.clone() for key, value in model.state_dict().items()}
+    with tempfile.TemporaryDirectory() as directory:
+      stopper = EarlyStopping(patience=2, project_name="test",
+                              checkpoint_file_path=directory, run_time_str="first")
+      stopper.check_and_save(0.5, model)
+      self.assertTrue(Path(stopper.file_path).is_file())
+      with torch.no_grad():
+        model.weight.add_(10)
+      stopper.check_and_save(0.6, model)
+      self.assertTrue(stopper.check_and_save(0.7, model)[1])
+      saved = torch.load(stopper.file_path, weights_only=True)
+      for key in initial:
+        self.assertTrue(torch.equal(saved[key], initial[key]))
+
+  def test_loss_is_sample_weighted_and_returns_saved_epoch(self):
+    run = FakeRun()
+    samples = [{"input": torch.full((10,), x), "target": torch.tensor(0)}
+               for x in (0.0, 0.0, 3.0)]
+    model = torch.nn.Linear(10, 1, bias=False)
+    with torch.no_grad():
+      model.weight.fill_(0.1)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0)
+    expected = (2 * math.log(2) + math.log1p(math.exp(3))) / 3
+    loader = DataLoader(samples, batch_size=2)
+    with tempfile.TemporaryDirectory() as directory:
+      result = training_loop(model, optimizer, loader, loader, run, directory, "weighted")
+      self.assertAlmostEqual(run.logged[0]["Training loss"], expected, places=6)
+      self.assertAlmostEqual(run.logged[0]["Validation loss"], expected, places=6)
+      self.assertEqual(result["best_epoch"], 1)
+      self.assertTrue(Path(result["checkpoint_path"]).exists())
+
+  def test_split_is_independent_of_global_rng(self):
+    first, validation, test = get_preprocessed_dataset()
+    torch.rand(57)
+    second, second_validation, _ = get_preprocessed_dataset()
+    self.assertEqual(first.indices, second.indices)
+    self.assertEqual(validation.indices, second_validation.indices)
+    self.assertEqual((len(first), len(validation), len(test)), (713, 178, 418))
+    self.assertTrue(torch.isfinite(first.dataset.X).all())
+    self.assertTrue(torch.isfinite(test.X).all())
+
   def test_binary_accuracy_and_f1(self):
     logits = torch.tensor([[2.0], [-1.0], [0.2], [-2.0]])
     targets = torch.tensor([[1.0], [0.0], [0.0], [1.0]])
