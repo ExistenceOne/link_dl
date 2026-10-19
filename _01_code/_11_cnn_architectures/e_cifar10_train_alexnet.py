@@ -62,10 +62,8 @@ def get_alexnet_model():
         )
         # classifier is just a name for linear layers
         self.fcn = nn.Sequential(
-            nn.Dropout(p=0.5),
             nn.Linear(in_features=192 * 3 * 3, out_features=512),
             nn.ReLU(),
-            nn.Dropout(p=0.5),
             nn.Linear(in_features=512, out_features=512),
             nn.ReLU(),
             nn.Linear(in_features=512, out_features=n_output),
@@ -76,7 +74,7 @@ def get_alexnet_model():
         Pass the input through the net.
         """
         x = self.cnn(x)
-        x = x.view(-1, 192 * 3 * 3)  # flatten the dimensions for linear layer input
+        x = x.view(x.size(0), -1)  # flatten the dimensions for linear layer input
         return self.fcn(x)
 
   my_model = AlexNet(in_channels=3, n_output=10)
