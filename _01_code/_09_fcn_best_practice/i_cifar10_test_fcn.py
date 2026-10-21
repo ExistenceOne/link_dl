@@ -30,7 +30,7 @@ def get_cifar10_test_data(flatten=False):
 
   cifar10_transforms = nn.Sequential(
     transforms.ConvertImageDtype(torch.float),
-    transforms.Normalize(mean=0.1307, std=0.3081),
+    transforms.Normalize(mean=(0.4915, 0.4823, 0.4468), std=(0.2470, 0.2435, 0.2616)),
   )
 
   if flatten:

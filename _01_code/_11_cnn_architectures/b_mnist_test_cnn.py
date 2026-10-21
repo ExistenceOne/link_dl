@@ -22,7 +22,7 @@ def main():
 
   test_model = get_cnn_model()
   classification_tester = ClassificationTester(
-    "mnist", test_model, test_data_loader, mnist_transforms, CHECKPOINT_FILE_PATH
+    "cnn_mnist", test_model, test_data_loader, mnist_transforms, CHECKPOINT_FILE_PATH
   )
   classification_tester.test()
 

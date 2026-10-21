@@ -22,7 +22,7 @@ def main():
 
   test_model = get_cnn_model()
   classification_tester = ClassificationTester(
-    "cifar10", test_model, test_data_loader, cifar10_transforms, CHECKPOINT_FILE_PATH
+    "cnn_cifar10", test_model, test_data_loader, cifar10_transforms, CHECKPOINT_FILE_PATH
   )
   classification_tester.test()
 
