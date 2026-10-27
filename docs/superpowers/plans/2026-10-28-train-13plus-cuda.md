@@ -13,9 +13,9 @@ is forbidden; confirm batch-size changes if the original size cannot fit.
       command manifests, per-job logs, measured profiles and resumable status.
 - [x] Test command discovery, GPU enforcement, checkpoint isolation, queue
       admission, LSTM loading and identified trainer regressions.
-- [ ] Run one-epoch, two-batch offline CUDA smoke tests for all 12 programs.
-- [ ] Start all passing full runs with original settings and documented W&B.
-- [ ] Review the branch and report live progress, failures and output paths.
+- [x] Run one-epoch, two-batch offline CUDA smoke tests for all 12 programs.
+- [x] Start the full-training queue with original settings and documented W&B.
+- [x] Review the branch and report live progress, failures and output paths.
 
 Review focus: concurrent checkpoint writes; failed child exit codes; no-CUDA
 startup; VRAM reserve and oversubscription; smoke/full-run separation.
@@ -42,3 +42,8 @@ startup; VRAM reserve and oversubscription; smoke/full-run separation.
   observed before fixes. `git diff --check` passes.
 - Second smoke pass started with final code fingerprints and automatic
   transition to full training. Outputs: training_runs/2026-10-28_cuda.
+- Final smoke pass: 21/21 completed successfully with matching fingerprints.
+- Full training started: two CUDA jobs concurrently, 19 pending; both initial
+  jobs reached epoch 8 with online W&B metrics and saved checkpoints.
+- Full training remains in progress under detached supervisor PID 198855.
+  These checkboxes describe implementation and launch, not 21 completed full runs.
