@@ -1,3 +1,4 @@
+from _01_code._99_common_utils.training_runtime import training_batches, record_validation
 import torch
 
 from _01_code._09_fcn_best_practice.c_trainer import ClassificationTrainer
@@ -21,7 +22,7 @@ class GoogLeNetClassificationTrainer(ClassificationTrainer):
     num_trained_samples = 0
     num_trains = 0
 
-    for train_batch in self.train_data_loader:
+    for train_batch in training_batches(self.train_data_loader):
       input_train, target_train = train_batch
       input_train = input_train.to(device=self.device)
       target_train = target_train.to(device=self.device)
@@ -59,7 +60,7 @@ class GoogLeNetClassificationTrainer(ClassificationTrainer):
     num_validations = 0
 
     with torch.no_grad():
-      for validation_batch in self.validation_data_loader:
+      for validation_batch in training_batches(self.validation_data_loader):
         input_validation, target_validation = validation_batch
         input_validation = input_validation.to(device=self.device)
         target_validation = target_validation.to(device=self.device)
@@ -67,11 +68,11 @@ class GoogLeNetClassificationTrainer(ClassificationTrainer):
         input_validation = self.transforms(input_validation)
 
         output_validation, output_validation_ax_1, output_validation_ax_2 = self.model(input_validation)
-        loss_validation = self.loss_fn(output_validation, target_validation)
+        batch_loss = self.loss_fn(output_validation, target_validation)
         loss_validation_aux_1 = self.loss_fn(output_validation_ax_1, target_validation)
         loss_validation_aux_2 = self.loss_fn(output_validation_ax_2, target_validation)
-        loss_validation += 0.3 * (loss_validation_aux_1 + loss_validation_aux_2)
-        loss_validation += loss_validation.item()
+        batch_loss += 0.3 * (loss_validation_aux_1 + loss_validation_aux_2)
+        loss_validation += batch_loss.item()
 
         predicted_validation = torch.argmax(output_validation, dim=1)
         num_corrects_validation += torch.sum(torch.eq(predicted_validation, target_validation)).item()

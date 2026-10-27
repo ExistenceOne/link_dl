@@ -15,7 +15,7 @@ CURRENT_FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 CHECKPOINT_FILE_PATH = os.path.join(CURRENT_FILE_PATH, "checkpoints")
 
 if not os.path.isdir(CHECKPOINT_FILE_PATH):
-  os.makedirs(os.path.join(CURRENT_FILE_PATH, "checkpoints"))
+  os.makedirs(os.path.join(CURRENT_FILE_PATH, "checkpoints"), exist_ok=True)
 
 from _01_code._09_fcn_best_practice.f_mnist_train_fcn import get_mnist_data
 from _01_code._09_fcn_best_practice.g_mnist_test_fcn import get_mnist_test_data
@@ -152,4 +152,4 @@ if __name__ == "__main__":
   args = parser.parse_args()
   main(args)
 
-  # python _01_code/_11_lstm_and_its_application/f_crypto_currency_regression_train_lstm.py --wandb
+  # python _01_code/_21_autoencoders/d_denoising_autoencoder_train_and_test.py --wandb

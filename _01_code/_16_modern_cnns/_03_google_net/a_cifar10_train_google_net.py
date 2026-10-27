@@ -12,7 +12,7 @@ sys.path.append(BASE_PATH)
 CURRENT_FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 CHECKPOINT_FILE_PATH = os.path.join(CURRENT_FILE_PATH, "checkpoints")
 if not os.path.isdir(CHECKPOINT_FILE_PATH):
-  os.makedirs(os.path.join(CURRENT_FILE_PATH, "checkpoints"))
+  os.makedirs(os.path.join(CURRENT_FILE_PATH, "checkpoints"), exist_ok=True)
 
 import sys
 sys.path.append(BASE_PATH)
@@ -167,7 +167,7 @@ def main(args):
     print(f"Training on device {device}.")
 
     train_data_loader, validation_data_loader, cifar10_transforms = get_cifar10_data(run, flatten=False)
-    model = torchvision.models.googlenet(num_classes=10) if USE_PYTORCH_MODEL else get_google_net_model(run, num_classes=10)
+    model = torchvision.models.googlenet(num_classes=10) if USE_PYTORCH_MODEL else get_google_net_model(num_classes=10)
     model.to(device)
 
     from torchinfo import summary

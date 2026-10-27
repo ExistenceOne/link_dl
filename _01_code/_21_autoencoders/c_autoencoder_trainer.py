@@ -1,3 +1,4 @@
+from _01_code._99_common_utils.training_runtime import training_batches, record_validation
 from datetime import datetime
 import numpy as np
 import torch
@@ -44,7 +45,7 @@ class AutoencoderTrainer:
     num_trains = 0
 
     # Iterate the dataloader (we do not need the label values, this is unsupervised learning)
-    for train_batch in self.train_data_loader:
+    for train_batch in training_batches(self.train_data_loader):
       # with "_" we just ignore the target labels
       input_train, _ = train_batch
 
@@ -79,7 +80,7 @@ class AutoencoderTrainer:
     num_validations = 0
 
     with torch.no_grad():
-      for validation_batch in self.validation_data_loader:
+      for validation_batch in training_batches(self.validation_data_loader):
         input_validation, _ = validation_batch
 
         if self.denoising is True:
@@ -164,6 +165,7 @@ class AutoencoderTrainer:
         elapsed_time = datetime.now() - training_start_time
         epoch_per_second = 1000 * epoch / elapsed_time.microseconds
 
+        record_validation(epoch, train_loss, validation_loss, self.run, self.device)
         message, early_stop = early_stopping.check_and_save(validation_loss, self.model)
 
         print(

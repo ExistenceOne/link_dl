@@ -14,7 +14,7 @@ sys.path.append(BASE_PATH)
 CURRENT_FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 CHECKPOINT_FILE_PATH = os.path.join(CURRENT_FILE_PATH, "checkpoints")
 if not os.path.isdir(CHECKPOINT_FILE_PATH):
-    os.makedirs(os.path.join(CURRENT_FILE_PATH, "checkpoints"))
+    os.makedirs(os.path.join(CURRENT_FILE_PATH, "checkpoints"), exist_ok=True)
 
 from _01_code._03_real_world_data_to_tensors.o_hourly_bikes_sharing_dataset_dataloader import get_hourly_bikes_data, \
     HourlyBikesDataset
@@ -112,4 +112,4 @@ if __name__ == "__main__":
     parser = get_parser()
     args = parser.parse_args()
     main(args)
-    # python _01_code/_10_rnn/h_bikes_train_rnn.py -v 100
+    # python _01_code/_17_rnn/h_bikes_train_rnn.py -v 100

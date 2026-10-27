@@ -16,11 +16,12 @@ sys.path.append(BASE_PATH)
 CURRENT_FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 CHECKPOINT_FILE_PATH = os.path.join(CURRENT_FILE_PATH, "checkpoints")
 if not os.path.isdir(CHECKPOINT_FILE_PATH):
-  os.makedirs(os.path.join(CURRENT_FILE_PATH, "checkpoints"))
+  os.makedirs(os.path.join(CURRENT_FILE_PATH, "checkpoints"), exist_ok=True)
 
 import sys
 sys.path.append(BASE_PATH)
 
+from _01_code._99_common_utils.training_runtime import data_workers
 from _01_code._99_common_utils.utils import get_num_cpu_cores, is_linux, is_windows
 from _01_code._09_fcn_best_practice.c_trainer import ClassificationTrainer
 from _01_code._09_fcn_best_practice.h_cifar10_train_fcn import get_cifar10_data
@@ -66,17 +67,19 @@ def get_augmented_cifar10_data(run):
   print("Num Train Samples: ", len(cifar10_train))
   print("Num Validation Samples: ", len(cifar10_validation))
 
-  num_data_loading_workers = get_num_cpu_cores() if is_linux() or is_windows() else 0
+  num_data_loading_workers = data_workers()
   print("Number of Data Loading Workers:", num_data_loading_workers)
 
   train_data_loader = DataLoader(
     dataset=cifar10_train, batch_size=run.config.batch_size, shuffle=True,
-    pin_memory=True, num_workers=num_data_loading_workers
+    pin_memory=True, num_workers=num_data_loading_workers,
+    persistent_workers=num_data_loading_workers > 0
   )
 
   validation_data_loader = DataLoader(
     dataset=cifar10_validation, batch_size=run.config.batch_size,
-    pin_memory=True, num_workers=num_data_loading_workers
+    pin_memory=True, num_workers=num_data_loading_workers,
+    persistent_workers=num_data_loading_workers > 0
   )
 
   cifar10_transforms = v2.Compose([
@@ -161,6 +164,6 @@ if __name__ == "__main__":
   parser = get_parser()
   args = parser.parse_args()
   main(args)
-  # python _01_code/_15_data_augmentation/a_cifar10_train_cnn_with_image_augmentation_and_batch_normalization.py --wandb --dropout --augment -v 1 -o 3 -w 0.002 -n 1
-  # python _01_code/_15_data_augmentation/a_cifar10_train_cnn_with_image_augmentation_and_batch_normalization.py --wandb --dropout --no-augment -v 1 -o 3 -w 0.002 -n 1
+  # python _01_code/_15_data_augmentation/b_cifar10_train_cnn_with_image_augmentation_and_batch_normalization.py --wandb --dropout --augment -v 1 -o 3 -w 0.002 -n 1
+  # python _01_code/_15_data_augmentation/b_cifar10_train_cnn_with_image_augmentation_and_batch_normalization.py --wandb --dropout --no-augment -v 1 -o 3 -w 0.002 -n 1
 

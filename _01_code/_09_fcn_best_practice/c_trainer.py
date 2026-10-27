@@ -1,3 +1,4 @@
+from _01_code._99_common_utils.training_runtime import training_batches, record_validation
 from datetime import datetime
 import torch
 from torch import nn
@@ -33,7 +34,7 @@ class ClassificationTrainer:
     num_trained_samples = 0
     num_trains = 0
 
-    for train_batch in self.train_data_loader:
+    for train_batch in training_batches(self.train_data_loader):
       # input_train.shape: torch.Size([2048, 3, 32, 32]),  target_train.shape: torch.Size([2048])
       input_train, target_train = train_batch
       input_train = input_train.to(device=self.device)
@@ -73,7 +74,7 @@ class ClassificationTrainer:
     num_validations = 0
 
     with torch.no_grad():
-      for validation_batch in self.validation_data_loader:
+      for validation_batch in training_batches(self.validation_data_loader):
         input_validation, target_validation = validation_batch
         input_validation = input_validation.to(device=self.device)
         target_validation = target_validation.to(device=self.device)
@@ -115,6 +116,7 @@ class ClassificationTrainer:
         elapsed_time = datetime.now() - training_start_time
         epoch_per_second = 0 if elapsed_time.seconds == 0 else epoch / elapsed_time.seconds
 
+        record_validation(epoch, train_loss, validation_loss, self.run, self.device)
         message, early_stop = early_stopping.check_and_save(validation_loss, self.model)
 
         print(

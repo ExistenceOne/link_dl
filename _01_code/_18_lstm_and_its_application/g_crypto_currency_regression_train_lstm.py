@@ -14,7 +14,7 @@ CURRENT_FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 CHECKPOINT_FILE_PATH = os.path.join(CURRENT_FILE_PATH, "checkpoints")
 
 if not os.path.isdir(CHECKPOINT_FILE_PATH):
-  os.makedirs(os.path.join(CURRENT_FILE_PATH, "checkpoints"))
+  os.makedirs(os.path.join(CURRENT_FILE_PATH, "checkpoints"), exist_ok=True)
 
 from _01_code._18_lstm_and_its_application.f_arg_parser import get_parser
 from _01_code._17_rnn.g_rnn_trainer import RegressionTrainer
@@ -99,7 +99,7 @@ def main(args):
     print(args)
     print(run.config)
 
-    train_data_loader, validation_data_loader, _ = get_btc_krw_data()
+    train_data_loader, validation_data_loader, _ = get_btc_krw_data(run)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(f"Training on device {device}.")
 
@@ -120,4 +120,4 @@ if __name__ == "__main__":
   args = parser.parse_args()
   main(args)
 
-  # python _01_code/_11_lstm_and_its_application/f_crypto_currency_regression_train_lstm.py --wandb
+  # python _01_code/_18_lstm_and_its_application/g_crypto_currency_regression_train_lstm.py --wandb

@@ -12,7 +12,7 @@ sys.path.append(BASE_PATH)
 CURRENT_FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 CHECKPOINT_FILE_PATH = os.path.join(CURRENT_FILE_PATH, "checkpoints")
 if not os.path.isdir(CHECKPOINT_FILE_PATH):
-  os.makedirs(os.path.join(CURRENT_FILE_PATH, "checkpoints"))
+  os.makedirs(os.path.join(CURRENT_FILE_PATH, "checkpoints"), exist_ok=True)
 
 import sys
 sys.path.append(BASE_PATH)
@@ -178,5 +178,5 @@ if __name__ == "__main__":
   parser = get_parser()
   args = parser.parse_args()
   main(args)
-  # python _01_code/_09_modern_cnns/_02_googlenet/a_cifar10_train_googlenet.py --wandb -v 10
+  # python _01_code/_16_modern_cnns/_04_resnet/a_cifar10_train_resnet.py --wandb -v 10
 

@@ -185,3 +185,6 @@ temp/google/gemini_image.py
 figs
 _04_homeworks_done
 .DS_Store
+
+# Local training manifests, telemetry, logs and checkpoints
+training_runs/

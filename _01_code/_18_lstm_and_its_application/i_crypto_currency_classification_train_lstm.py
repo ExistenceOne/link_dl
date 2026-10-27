@@ -13,7 +13,7 @@ CURRENT_FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 CHECKPOINT_FILE_PATH = os.path.join(CURRENT_FILE_PATH, "checkpoints")
 
 if not os.path.isdir(CHECKPOINT_FILE_PATH):
-  os.makedirs(os.path.join(CURRENT_FILE_PATH, "checkpoints"))
+  os.makedirs(os.path.join(CURRENT_FILE_PATH, "checkpoints"), exist_ok=True)
 
 from _01_code._09_fcn_best_practice.c_trainer import ClassificationTrainer
 from _01_code._18_lstm_and_its_application.f_arg_parser import get_parser
@@ -64,7 +64,7 @@ def main(args):
     print(args)
     print(run.config)
 
-    train_data_loader, validation_data_loader, _ = get_btc_krw_data(is_regression=False)
+    train_data_loader, validation_data_loader, _ = get_btc_krw_data(run, is_regression=False)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(f"Training on device {device}.")
 
@@ -84,4 +84,4 @@ if __name__ == "__main__":
   parser = get_parser()
   args = parser.parse_args()
   main(args)
-  # python _01_code/_11_lstm_and_its_application/i_crypto_currency_classification_train_lstm.py -p 100 -r 0.00001
+  # python _01_code/_18_lstm_and_its_application/i_crypto_currency_classification_train_lstm.py -p 100 -r 0.00001
