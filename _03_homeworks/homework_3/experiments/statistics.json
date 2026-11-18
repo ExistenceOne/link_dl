@@ -1,0 +1,9 @@
+{
+  "mean": 0.2855656942074541,
+  "std": 0.3527285864947437,
+  "split_seed": 42,
+  "train_samples": 55000,
+  "validation_samples": 5000,
+  "pixels": 43120000,
+  "pixel_conversion": "CPU float32 / 255, statistics accumulated in float64"
+}

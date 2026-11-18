@@ -1,0 +1,82 @@
+{
+  "googlenet": {
+    "model": "googlenet",
+    "configuration": {
+      "wandb": true,
+      "batch_size": 256,
+      "epochs": 100,
+      "learning_rate": 0.001,
+      "validation_intervals": 1,
+      "early_stop_patience": 10,
+      "early_stop_delta": 1e-05,
+      "optimizer": 3,
+      "weight_decay": 0.0001,
+      "dropout": false,
+      "normalization": 1,
+      "augment": true,
+      "model": "googlenet",
+      "vgg_variant": "resize",
+      "dropout_rate": 0.5,
+      "normalize": true,
+      "mean": 0.2855656942074541,
+      "std": 0.3527285864947437,
+      "seed": 42,
+      "split_seed": 42
+    },
+    "baseline_accuracy": 90.02,
+    "seed_scores": {
+      "42": 92.76,
+      "43": 92.32,
+      "44": 92.34
+    },
+    "mean_accuracy": 92.47333333333333,
+    "std_accuracy": 0.24846193538112712,
+    "minimum_accuracy": 92.32,
+    "run_directories": [
+      "/home/link/link_dl/_03_homeworks/homework_3/experiments/googlenet_resnet_tuning_20261117/googlenet_dropout_85eb79c97853",
+      "/home/link/link_dl/_03_homeworks/homework_3/experiments/googlenet_resnet_tuning_20261117/googlenet_repeat_seed_cc74d419a909",
+      "/home/link/link_dl/_03_homeworks/homework_3/experiments/googlenet_resnet_tuning_20261117/googlenet_repeat_seed_d54a50b99def"
+    ],
+    "optional_high_rate_executed": true
+  },
+  "resnet": {
+    "model": "resnet",
+    "configuration": {
+      "wandb": true,
+      "batch_size": 256,
+      "epochs": 100,
+      "learning_rate": 0.0003,
+      "validation_intervals": 1,
+      "early_stop_patience": 10,
+      "early_stop_delta": 1e-05,
+      "optimizer": 3,
+      "weight_decay": 0.0,
+      "dropout": false,
+      "normalization": 1,
+      "augment": true,
+      "model": "resnet",
+      "vgg_variant": "resize",
+      "dropout_rate": 0.5,
+      "normalize": true,
+      "mean": 0.2855656942074541,
+      "std": 0.3527285864947437,
+      "seed": 42,
+      "split_seed": 42
+    },
+    "baseline_accuracy": 90.52,
+    "seed_scores": {
+      "42": 92.48,
+      "43": 92.72,
+      "44": 92.52
+    },
+    "mean_accuracy": 92.57333333333334,
+    "std_accuracy": 0.12858201014657147,
+    "minimum_accuracy": 92.48,
+    "run_directories": [
+      "/home/link/link_dl/_03_homeworks/homework_3/experiments/googlenet_resnet_tuning_20261117/resnet_weight_decay_ec5b5334e3a8",
+      "/home/link/link_dl/_03_homeworks/homework_3/experiments/googlenet_resnet_tuning_20261117/resnet_repeat_seed_f83656351bdf",
+      "/home/link/link_dl/_03_homeworks/homework_3/experiments/googlenet_resnet_tuning_20261117/resnet_repeat_seed_5f7df8a7fdf7"
+    ],
+    "optional_high_rate_executed": false
+  }
+}

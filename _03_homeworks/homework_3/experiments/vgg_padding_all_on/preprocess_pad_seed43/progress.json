@@ -1,0 +1,9 @@
+{
+  "epoch": 33,
+  "train_loss": 0.12230335638620132,
+  "validation_loss": 0.2246262401342392,
+  "best_validation_loss": 0.17695806920528412,
+  "device": "cuda:0",
+  "wandb_id": "4fiw1u7k",
+  "wandb_url": null
+}

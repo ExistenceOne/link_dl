@@ -1,0 +1,29 @@
+{
+  "settings": {
+    "condition": "preprocess_pad",
+    "seed": 42,
+    "split_seed": 42,
+    "batch_size": 256,
+    "epochs": 1,
+    "early_stop_patience": 10,
+    "early_stop_delta": 1e-05,
+    "validation_intervals": 1,
+    "learning_rate": 0.0003,
+    "weight_decay": 0.0001,
+    "optimizer": "Adam",
+    "batch_norm": true,
+    "dropout": 0.5,
+    "augment": true,
+    "normalize": true,
+    "mean": 0.2855656942074541,
+    "std": 0.3527285864947437
+  },
+  "checkpoint": "/home/link/link_dl/_03_homeworks/homework_3/experiments/vgg_padding_all_on_smoke/preprocess_pad_seed42/preprocess_pad_seed42_checkpoint_selected.pt",
+  "initial_weights_sha256": "e43ed14466e893adfccf8a07ebf9fe5b1b22bde4471ab6761d77896fddadee91",
+  "final_epoch": 1,
+  "validation_loss": 2.30141544342041,
+  "validation_accuracy": 12.5,
+  "test_correct": 1000,
+  "test_samples": 10000,
+  "test_accuracy": 10.0
+}

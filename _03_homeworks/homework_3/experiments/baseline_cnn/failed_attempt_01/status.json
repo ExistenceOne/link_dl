@@ -1,0 +1,9 @@
+{
+  "status": "failed",
+  "error": "AssertionError('Tensor-likes are not equal!\\n\\nMismatched elements: 313 / 784 (39.9%)\\nGreatest absolute difference: 5.960464477539063e-08 at index (0, 5, 15)\\nGreatest relative difference: 7.916241884231567e-08 at index (0, 4, 12)')",
+  "elapsed_seconds": 3.801152229309082,
+  "cuda": "NVIDIA GeForce RTX 3060",
+  "torch": "2.8.0+cu128",
+  "tensor_cache": "GPU; equivalent ToTensor pixels, same Subset indices",
+  "training_code_sha256": "8a679827167ed31850002acce3b5cdd7bed02e82dd442bc23d886f4199ae340b"
+}

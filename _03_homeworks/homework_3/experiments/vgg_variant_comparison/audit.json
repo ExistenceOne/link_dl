@@ -1,0 +1,88 @@
+{
+  "completed_runs": 9,
+  "train_samples": 55000,
+  "validation_samples": 5000,
+  "test_data_used": false,
+  "loss_based_checkpoint_selection_verified": true,
+  "all_metrics_finite": true,
+  "paired_initialization_verified": true,
+  "shuffle_verified": true,
+  "split_verified": true,
+  "identical_training_source_verified": true,
+  "training_code_sha256": "a652b511b8f71e9464b989de86bd55cabc38b2c6c77229a119a37f479a394340",
+  "device": "NVIDIA GeForce RTX 3060",
+  "torch": "2.8.0+cu128",
+  "parameter_count": 9755274,
+  "worker_wall_seconds": 3387.2785279750824,
+  "checkpoint_verification": {
+    "vgg_resize_seed42": {
+      "sha256": "cb75e551957cff1370fc8ef7e2d51a72888a369fcfa06b013856f440b980ba05",
+      "selected_epoch": 25,
+      "accuracy": 93.84
+    },
+    "vgg_pad_seed42": {
+      "sha256": "32acdd102505a9b4041b61e98f9456d211a25f45a419fd3942338ea89b3df6b9",
+      "selected_epoch": 40,
+      "accuracy": 94.2
+    },
+    "vgg_no_last_pool_seed42": {
+      "sha256": "058ee7c3333451f49678f634f1f7c63919dd405084de98764206fca226997f85",
+      "selected_epoch": 35,
+      "accuracy": 93.84
+    },
+    "vgg_resize_seed43": {
+      "sha256": "60a96e4a92a7136d80cf06f3f0b0f6e1c4c2a19251f4a1373089a108edbba374",
+      "selected_epoch": 26,
+      "accuracy": 93.86
+    },
+    "vgg_pad_seed43": {
+      "sha256": "485e260ef4bc1cc77f3d6bb8f84108e8d0eafdf9193325b11c4cff36b62b8934",
+      "selected_epoch": 29,
+      "accuracy": 93.92
+    },
+    "vgg_no_last_pool_seed43": {
+      "sha256": "77144349033c7fe68ba2854784f4e0951918052a277a85ee03abf36f9f8ce44c",
+      "selected_epoch": 18,
+      "accuracy": 93.04
+    },
+    "vgg_resize_seed44": {
+      "sha256": "a3fc079f9a920642d2826bd09b70dd68e91e9c6543588be56e57841933148643",
+      "selected_epoch": 23,
+      "accuracy": 93.5
+    },
+    "vgg_pad_seed44": {
+      "sha256": "1618adefcc7ed17583e5c9cabf2ab13ba17fe1c5380c5bf8d21d5a65b3105a21",
+      "selected_epoch": 28,
+      "accuracy": 93.7
+    },
+    "vgg_no_last_pool_seed44": {
+      "sha256": "a61691b3895d9477b368e17319bccd9d63c1b6c259ca8722e5e976e02868af95",
+      "selected_epoch": 31,
+      "accuracy": 93.46
+    }
+  },
+  "previous_resize": {
+    "scores": [
+      94.06,
+      93.96,
+      93.28
+    ],
+    "mean": 93.76666666666667,
+    "std": 0.42442117446391886
+  },
+  "fresh_resize": {
+    "scores": [
+      93.84,
+      93.86,
+      93.5
+    ],
+    "mean": 93.73333333333333,
+    "std": 0.2023198787399143,
+    "paired_deltas_pp": [
+      -0.21999999999999886,
+      -0.09999999999999432,
+      0.21999999999999886
+    ],
+    "mean_delta_pp": -0.03333333333333144
+  }
+}

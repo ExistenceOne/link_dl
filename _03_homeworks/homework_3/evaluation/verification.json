@@ -1,0 +1,10 @@
+{
+  "sample_count": 10000,
+  "correct": 9329,
+  "accuracy": 93.29,
+  "confusion_sum": 10000,
+  "probability_sum_max_error": 2.1807346584079568e-07,
+  "ambiguous_index": 9237,
+  "source_checkpoint_unchanged": true,
+  "bn_statistics_unchanged": true
+}

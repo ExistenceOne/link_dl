@@ -1,0 +1,10 @@
+variant,seed,checkpoint_validation_accuracy,checkpoint_validation_loss,epochs,elapsed_seconds,peak_gpu_memory_mb,parameter_count,wandb_url
+resize,42,93.84,0.1722322128713131,35,375.3064241409302,750.5029296875,9755274,https://wandb.ai/existenceone-korea-university-of-technology-and-education/cnn_fashion_mnist/runs/uoz0d0ww
+pad,42,94.2,0.18079404905438423,50,534.8915107250214,750.5029296875,9755274,https://wandb.ai/existenceone-korea-university-of-technology-and-education/cnn_fashion_mnist/runs/nbqa01nf
+no_last_pool,42,93.84,0.1808366633951664,45,357.4845690727234,646.6826171875,9755274,https://wandb.ai/existenceone-korea-university-of-technology-and-education/cnn_fashion_mnist/runs/op1h3q5y
+resize,43,93.86,0.18230055570602416,36,387.1019461154938,750.5029296875,9755274,https://wandb.ai/existenceone-korea-university-of-technology-and-education/cnn_fashion_mnist/runs/4r0vqi68
+pad,43,93.92,0.17771702483296395,39,419.23458790779114,750.5029296875,9755274,https://wandb.ai/existenceone-korea-university-of-technology-and-education/cnn_fashion_mnist/runs/9bcthjok
+no_last_pool,43,93.04,0.1930200383067131,28,223.5604603290558,646.6826171875,9755274,https://wandb.ai/existenceone-korea-university-of-technology-and-education/cnn_fashion_mnist/runs/awvcak5v
+resize,44,93.5,0.17387463450431823,33,356.15431213378906,750.5029296875,9755274,https://wandb.ai/existenceone-korea-university-of-technology-and-education/cnn_fashion_mnist/runs/8bt77qvs
+pad,44,93.7,0.18228165619075298,38,407.724072933197,750.5029296875,9755274,https://wandb.ai/existenceone-korea-university-of-technology-and-education/cnn_fashion_mnist/runs/9ps940z6
+no_last_pool,44,93.46,0.17919019497931005,41,325.8206446170807,646.6826171875,9755274,https://wandb.ai/existenceone-korea-university-of-technology-and-education/cnn_fashion_mnist/runs/j67vd383
